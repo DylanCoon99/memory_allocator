@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include "allocator.h"
+
+/*
+Review of how a memory allocator works
+
+Memory allocator manages the heap as a free list. Upon calling malloc, the allocator finds an appropriate amount of memory
+to give to allocate and returns a pointer to the memory. When memory is freed, the memory is unallocated and marked free.
+
+
+Start out with a free list allocator without coalescing.
+
+
+
+Goals for today:
+
+	(1) Implement Free List: This is a just a linked list of blocks of free memory
+
+
+	
+
+
+*/
+
+
+
+
+
+
+
+
+
+int main() {
+
+	printf("Hello world!\n");
+
+
+	return 0;
+}
+

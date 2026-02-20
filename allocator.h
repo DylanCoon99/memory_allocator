@@ -6,6 +6,9 @@
 #include <stddef.h>
 
 
+#define SIZE (1024 * 1024) // Allocate 1 MB
+
+
 
 void *my_malloc(size_t size);
 void my_free(void *ptr);
@@ -34,8 +37,6 @@ typedef struct block {
 struct free_list {
 	block_t *head;	
 };
-
-
 
 
 

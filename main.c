@@ -32,8 +32,13 @@ Goals for today:
 
 int main() {
 
-	printf("Hello world!\n");
+	printf("Testing my_malloc function!\n");
 
+	int *buffer;
+
+	buffer = my_malloc(10);
+
+	printf("This is my buffer size: %lu", sizeof(buffer));
 
 	return 0;
 }

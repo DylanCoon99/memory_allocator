@@ -27,7 +27,7 @@ void print_free_list() {
 		current = current->next;
 		i++;
 	}
-	printf("=================\n");
+	printf("=================\n\n");
 }
 
 
@@ -61,9 +61,14 @@ block_t *find_free_block(size_t size) {
 		if (current->size > size) {
 			// if current block is adequate size -> split this block
 
+
+			// need to fix how this block is incremented; i am incrementing it sizof(block_t) * (1 + size) when I should be incrementing it just sizeof(block_t) + 100 bytes
 			// update new block
-			block_t *new_block = current + 1 + size; // add the header and size of newly allocated block
-			new_block->size = current->size - size ;
+
+
+			block_t *new_block = (block_t*)((char*)(current + 1) + size); // add the header and size of newly allocated block
+			new_block->size = current->size - size - sizeof(block_t);
+			new_block->next = current->next;
  
 			// update the current block size
 			current->size = size;
@@ -75,14 +80,9 @@ block_t *find_free_block(size_t size) {
 				prev->next = new_block;
 			}
 
-			// update free list size
-			free_list->size = free_list->size - size;
-
 			break;
 		} else if (current->size == size) {
 			// insert new block in free list
-
-			prev->next = current->next;
 			free_block = current;
 
 			if (prev == NULL) {
@@ -90,8 +90,9 @@ block_t *find_free_block(size_t size) {
 			} else {
 				prev->next = current->next;
 			}
-
-			free_list->size = free_list->size - size;
+			if (free_list != NULL){
+				free_list->size = free_list->size - size;
+			}
 			break;
 
 		}
@@ -165,24 +166,19 @@ void my_free(void *ptr) {
 
 	// Add to the free list
 	// from the header -> get the size -> free the block
-	while (current->next != NULL && current < block) {
+	while (current != NULL && current < block) {
 		prev = current;
 		current = current->next;
 	}
 
-	// insert into free list sorted address order
+    // Insert block
+	block->next = current;
 	if (prev == NULL) {
-
-		// TO BE IMPLEMENTED
-
-		block->next = free_list;
-		free_list = block;
-
-		// need to sort this out
-
+	  free_list = block;
 	} else {
-		prev->next = block;
+	  prev->next = block;
 	}
+
 	printf("Freed block: %p\n", block);
 	print_free_list();
 

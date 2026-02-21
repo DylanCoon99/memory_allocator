@@ -24,7 +24,14 @@ Goals for today:
 
 
 
+void print_buffer(int *buffer, int size) {
 
+	printf("Printing buffer: %p\n", buffer);
+	for (int i = 0; i < size; i++) {
+		printf("%d\n", buffer[i]);
+	}
+
+}
 
 
 
@@ -39,12 +46,26 @@ int main() {
 
 	buffer = my_malloc(100);
 
+	for (int i = 0; i < 100; i++) {
+		buffer[i] = i*i;
+	}
+
+	//print_buffer(buffer, 100);
+
+	my_free(buffer);
+
 
 	printf("Calling malloc again. Free list should already by initialized\n");
 
 	buffer = my_malloc(200);
 
-	printf("Here is my buffer: %d\n", buffer[0]);
+	for (int i = 0; i < 200; i++) {
+		buffer[i] = i*i;
+	}
+
+	//printf("Here is my buffer[0]: %d\n", buffer[0]);
+
+	//print_buffer(buffer, 200);
 
 	my_free(buffer);
 

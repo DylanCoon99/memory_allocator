@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra -g -O0
 TARGET = memory_allocator
 
 SRCS = main.c allocator.c

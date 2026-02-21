@@ -11,6 +11,26 @@
 static block_t *free_list = NULL;
 
 
+void print_free_list() {
+	block_t *current = free_list;
+	int i = 0;
+
+	printf("=== Free List ===\n");
+	if (current == NULL) {
+		printf("(empty)\n");
+		printf("=================\n");
+		return;
+	}
+
+	while (current != NULL) {
+		printf("[%d] addr: %p, size: %zu, next: %p\n", i, (void *)current, current->size, (void *)current->next);
+		current = current->next;
+		i++;
+	}
+	printf("=================\n");
+}
+
+
 block_t *find_free_block(size_t size) {
 	// iterates over the free list and finds the first fit
 	printf("Found a free block of size: %lu\n", size);
@@ -22,13 +42,7 @@ block_t *find_free_block(size_t size) {
 	Algorithm: Find first fit for a block -> split it into two blocks -> maintain free list
 
 
-	Giant block of allocated memory from mmap
-	--------------------------------------------------------------
-	|                      										 |
-	|															 |
-	|															 |
-	|															 |
-	--------------------------------------------------------------
+
 	When a block is requested, we find first fit of free block by
 	iterating over the free list. When we find it, we take only the
 	memory we need, break the free block in two and add the new free
@@ -40,27 +54,44 @@ block_t *find_free_block(size_t size) {
 	block_t *prev = NULL;
 	block_t *current = free_list;
 
+	// need to have a way of making sure the head of the free list is updated
 
-	while (current->next != NULL) {
+
+	while (current != NULL) {
 		if (current->size > size) {
 			// if current block is adequate size -> split this block
 
 			// update new block
 			block_t *new_block = current + 1 + size; // add the header and size of newly allocated block
-			new_block->size = current->size - size;
-
-			// insert new block in free list
-			prev->next = new_block;
-
+			new_block->size = current->size - size ;
+ 
 			// update the current block size
 			current->size = size;
 			free_block = current;
+
+			if (prev == NULL) {
+				free_list = new_block;	
+			} else {
+				prev->next = new_block;
+			}
+
+			// update free list size
+			free_list->size = free_list->size - size;
+
 			break;
 		} else if (current->size == size) {
 			// insert new block in free list
 
 			prev->next = current->next;
 			free_block = current;
+
+			if (prev == NULL) {
+				free_list = current->next;
+			} else {
+				prev->next = current->next;
+			}
+
+			free_list->size = free_list->size - size;
 			break;
 
 		}
@@ -114,21 +145,48 @@ void *my_malloc(size_t size){
 			return NULL;
 		}
 		printf("Initialized free list.\n");
+		print_free_list();
 	}
 
 	printf("Looking for a free block of size: %lu\n", size);
 
 	// find free block
 	block_t *block = find_free_block(size);
+	print_free_list();
 	return (void *)(block + 1);	
 }
 
-/*
-void my_free(void *ptr) {
-  // Step BACK to get the header
-  block_t *block = (block_t *)ptr - 1;
 
-  // Add to the free list
-  // from the header -> get the size -> free the block
+void my_free(void *ptr) {
+	// Step BACK to get the header
+	block_t *block = (block_t *)ptr - 1;
+	block_t *prev = NULL;
+	block_t *current = free_list;
+
+	// Add to the free list
+	// from the header -> get the size -> free the block
+	while (current->next != NULL && current < block) {
+		prev = current;
+		current = current->next;
+	}
+
+	// insert into free list sorted address order
+	if (prev == NULL) {
+
+		// TO BE IMPLEMENTED
+
+		block->next = free_list;
+		free_list = block;
+
+		// need to sort this out
+
+	} else {
+		prev->next = block;
+	}
+	printf("Freed block: %p\n", block);
+	print_free_list();
+
+
+	// implement coalescing here; blocks should be coalesced if they are adjacent
+
 }
-*/

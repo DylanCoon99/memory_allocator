@@ -36,15 +36,17 @@ int main() {
 
 	int *buffer;
 
-	buffer = my_malloc(10);
 
-	printf("This is my buffer size: %lu\n", sizeof(buffer));
+	buffer = my_malloc(100);
 
 
 	printf("Calling malloc again. Free list should already by initialized\n");
 
 	buffer = my_malloc(200);
 
+	printf("Here is my buffer: %d\n", buffer[0]);
+
+	my_free(buffer);
 
 	return 0;
 }

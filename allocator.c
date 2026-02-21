@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 
-// Implementation of malloc function
+// Implementation of malloc function using free list allocation
 
 
 static block_t *free_list = NULL;
@@ -14,16 +14,60 @@ static block_t *free_list = NULL;
 block_t *find_free_block(size_t size) {
 	// iterates over the free list and finds the first fit
 	printf("Found a free block of size: %lu\n", size);
-
 	block_t *free_block = NULL;
 
 	/*
 	Need to find a free block
 
+	Algorithm: Find first fit for a block -> split it into two blocks -> maintain free list
+
+
+	Giant block of allocated memory from mmap
+	--------------------------------------------------------------
+	|                      										 |
+	|															 |
+	|															 |
+	|															 |
+	--------------------------------------------------------------
+	When a block is requested, we find first fit of free block by
+	iterating over the free list. When we find it, we take only the
+	memory we need, break the free block in two and add the new free
+	block to the free list.
 	*/
 
+	// iterate over free list and find the first fit
+
+	block_t *prev = NULL;
+	block_t *current = free_list;
 
 
+	while (current->next != NULL) {
+		if (current->size > size) {
+			// if current block is adequate size -> split this block
+
+			// update new block
+			block_t *new_block = current + 1 + size; // add the header and size of newly allocated block
+			new_block->size = current->size - size;
+
+			// insert new block in free list
+			prev->next = new_block;
+
+			// update the current block size
+			current->size = size;
+			free_block = current;
+			break;
+		} else if (current->size == size) {
+			// insert new block in free list
+
+			prev->next = current->next;
+			free_block = current;
+			break;
+
+		}
+		prev = current;
+		current = current->next;
+
+	}
 
 	return free_block;
 }
@@ -50,6 +94,7 @@ int init_free_list(){
 
     printf("Memory allocated at address: %p\n", free_list);
 
+    // define the size of the free list by subtracting size of header
     free_list->size = SIZE - sizeof(block_t);
     free_list->next = NULL;
 
@@ -60,8 +105,6 @@ int init_free_list(){
 void *my_malloc(size_t size){
 	// on first my_malloc call, the free list will be NULL -> need to request memory from the OS (sbrk() of mmap())
 	if (free_list == NULL) {
-		// Request memory from the OS using mmap
-		// 1. Declare a pointer to hold the address of the allocated memory.
 		int ret;
 
 		ret = init_free_list();

@@ -38,7 +38,13 @@ int main() {
 
 	buffer = my_malloc(10);
 
-	printf("This is my buffer size: %lu", sizeof(buffer));
+	printf("This is my buffer size: %lu\n", sizeof(buffer));
+
+
+	printf("Calling malloc again. Free list should already by initialized\n");
+
+	buffer = my_malloc(200);
+
 
 	return 0;
 }

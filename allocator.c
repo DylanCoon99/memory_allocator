@@ -11,15 +11,23 @@
 static block_t *free_list = NULL;
 
 
-/*
 block_t *find_free_block(size_t size) {
 	// iterates over the free list and finds the first fit
+	printf("Found a free block of size: %lu\n", size);
 
-	block_t free_block = NULL;
+	block_t *free_block = NULL;
+
+	/*
+	Need to find a free block
+
+	*/
+
+
+
 
 	return free_block;
 }
-*/
+
 
 
 int init_free_list(){
@@ -42,6 +50,8 @@ int init_free_list(){
 
     printf("Memory allocated at address: %p\n", free_list);
 
+    free_list->size = SIZE - sizeof(block_t);
+    free_list->next = NULL;
 
 	return EXIT_SUCCESS;
 }
@@ -64,12 +74,10 @@ void *my_malloc(size_t size){
 	}
 
 	printf("Looking for a free block of size: %lu\n", size);
+
 	// find free block
-	/*
-	block_t block = find_free_block(size);
-	return (void *)(block + 1);
-	*/
-	return NULL;
+	block_t *block = find_free_block(size);
+	return (void *)(block + 1);	
 }
 
 /*

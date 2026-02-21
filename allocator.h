@@ -33,11 +33,12 @@ typedef struct block {
 } block_t;
 
 
-
+/*
 struct free_list {
 	block_t *head;	
+	size_t size;
 };
 
-
+*/
 
 #endif

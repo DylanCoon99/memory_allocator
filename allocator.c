@@ -42,7 +42,6 @@ block_t *find_free_block(size_t size) {
 	Algorithm: Find first fit for a block -> split it into two blocks -> maintain free list
 
 
-
 	When a block is requested, we find first fit of free block by
 	iterating over the free list. When we find it, we take only the
 	memory we need, break the free block in two and add the new free
@@ -61,10 +60,8 @@ block_t *find_free_block(size_t size) {
 		if (current->size > size) {
 			// if current block is adequate size -> split this block
 
-
 			// need to fix how this block is incremented; i am incrementing it sizof(block_t) * (1 + size) when I should be incrementing it just sizeof(block_t) + 100 bytes
 			// update new block
-
 
 			block_t *new_block = (block_t*)((char*)(current + 1) + size); // add the header and size of newly allocated block
 			new_block->size = current->size - size - sizeof(block_t);

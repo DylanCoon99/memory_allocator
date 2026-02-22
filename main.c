@@ -44,7 +44,7 @@ int main() {
 	int *buffer;
 
 
-	buffer = my_malloc(100);
+	buffer = my_malloc(100 * sizeof(int));
 
 	for (int i = 0; i < 100; i++) {
 		buffer[i] = i*i;
@@ -57,7 +57,7 @@ int main() {
 
 	printf("Calling malloc again. Free list should already by initialized\n");
 
-	buffer = my_malloc(200);
+	buffer = my_malloc(200 * sizeof(int));
 
 	for (int i = 0; i < 200; i++) {
 		buffer[i] = i*i;

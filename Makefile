@@ -13,7 +13,11 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clean:
-	rm -f $(OBJS) $(TARGET)
+test: tests.o allocator.o
+	$(CC) $(CFLAGS) -o run_tests tests.o allocator.o
+	./run_tests
 
-.PHONY: all clean
+clean:
+	rm -f $(OBJS) $(TARGET) tests.o run_tests
+
+.PHONY: all clean test

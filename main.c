@@ -36,7 +36,6 @@ void print_buffer(int *buffer, int size) {
 
 
 
-
 int main() {
 
 	printf("Testing my_malloc function!\n");

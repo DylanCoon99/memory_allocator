@@ -32,7 +32,3 @@ Free list implementation
 
 Free list allocator
 Coalescing blocks
-Segregated free lists
-Buddy allocator
-mmap for large allocations
-Thread-local arenas

@@ -150,7 +150,7 @@ void *my_malloc(size_t size){
 
 	// find free block
 	block_t *block = find_free_block(size);
-	//print_free_list();
+	print_free_list();
 	return (void *)(block + 1);	
 }
 
@@ -177,9 +177,21 @@ void my_free(void *ptr) {
 	}
 
 	printf("Freed block: %p\n", block);
-	//print_free_list();
-
+	
 
 	// implement coalescing here; blocks should be coalesced if they are adjacent
+	
+	if (current && ((char *)block + sizeof(block_t) + block->size == (char *)current)) {
+		// check if block and current are next to each other
+		block->next = current->next;
+		block->size = block->size +  sizeof(block_t) + current->size;
+	}
+	
+	if (prev && ((char *)prev + sizeof(block_t) + prev->size == (char *)block)) {
+		// check if prev and block are next to eachother
+		prev->next = block->next;
+		prev->size = prev->size + sizeof(block_t) + block->size;
+	}
 
+	print_free_list();
 }
